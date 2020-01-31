@@ -10,7 +10,7 @@
       </li>
     </ul>
     <div>
-      <button @click="toggleFilter" type="button">Filter</button>
+      <button @click="toggleFilter" type="button" :disabled="isFilterActivated">Filter</button>
       <button @click="resetData" type="button">Clear</button>
     </div>
     <div v-if="isFilterActivated">
@@ -55,7 +55,7 @@ export default {
       selected: {},
       unique: [],
       // Filtre 2
-      usersNumber: 0,
+      usersNumber: null,
       // Filtre 3
       userName: '',
     };
@@ -91,6 +91,9 @@ export default {
     resetData() {
       this.array = groups;
       this.toggleFilter();
+      this.selected = {},
+      this.usersNumber = null;
+      this.userName = ''
     },
   },
   mounted() {
@@ -100,6 +103,9 @@ export default {
 </script>
 
 <style scoped>
+.test {
+  display: flex;
+}
 h1 {
   font-size: 1.5rem;
 }
@@ -107,6 +113,7 @@ h1 {
   border: 1px solid black;
   border-radius: 10%;
   width: 200px;
+  height: 170px;
 }
 ul {
   list-style-type: none;
