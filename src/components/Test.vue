@@ -31,6 +31,14 @@
           placeholder="Rentrez un nombre"
         />
       </div>
+      <div>
+        <p>Filtre par nom de groupe</p>
+        <input
+          v-model="userName"
+          @input="nameFilter($event)"
+          placeholder="Rentrez un nom de groupe"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -48,6 +56,8 @@ export default {
       unique: [],
       // Filtre 2
       usersNumber: 0,
+      // Filtre 3
+      userName: '',
     };
   },
   methods: {
@@ -73,10 +83,15 @@ export default {
         (group) => group.users.length >= event.target.value,
       );
     },
+    nameFilter(event) {
+      this.array = groups.filter((group) =>
+        group.name.toLowerCase().includes(event.target.value.toLowerCase()),
+      );
+    },
     resetData() {
       this.array = groups;
       this.toggleFilter();
-    }
+    },
   },
   mounted() {
     this.getUniqueTypes();
