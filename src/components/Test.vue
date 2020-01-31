@@ -10,8 +10,8 @@
       </li>
     </ul>
     <div>
-      <button @click="activateFilter" type="button">Filter</button>
-      <button @click="getUniqueTypes" type="button">Clear</button>
+      <button @click="toggleFilter" type="button">Filter</button>
+      <button @click="resetData" type="button">Clear</button>
     </div>
     <div v-if="isFilterActivated">
       <select v-model="selected" @change="onChange($event)">
@@ -23,6 +23,14 @@
           {{ group.type }}
         </option>
       </select>
+      <div>
+        <p>Filtre par nombre minimum d'utilisateurs</p>
+        <input
+          v-model="usersNumber"
+          @input="numberFilter($event)"
+          placeholder="Rentrez un nombre"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -35,8 +43,11 @@ export default {
     return {
       array: groups,
       isFilterActivated: false,
+      // Filtre 1
       selected: {},
       unique: [],
+      // Filtre 2
+      usersNumber: 0,
     };
   },
   methods: {
@@ -48,7 +59,7 @@ export default {
         .map((e) => groups[e]);
       /* eslint-disable no-console */
     },
-    activateFilter() {
+    toggleFilter() {
       this.isFilterActivated = !this.isFilterActivated;
     },
     onChange(event) {
@@ -57,6 +68,15 @@ export default {
       );
       this.array = filteredArray;
     },
+    numberFilter(event) {
+      this.array = groups.filter(
+        (group) => group.users.length >= event.target.value,
+      );
+    },
+    resetData() {
+      this.array = groups;
+      this.toggleFilter();
+    }
   },
   mounted() {
     this.getUniqueTypes();
