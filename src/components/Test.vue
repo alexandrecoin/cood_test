@@ -1,6 +1,6 @@
 <template>
   <div class="test">
-    <ul v-for="(group, index) in array" v-bind:key="index">
+    <ul v-for="(group, index) in filteredGroups" v-bind:key="index">
       <li>
         <div class="card">
           <h1>{{ group.name }}</h1>
@@ -17,7 +17,7 @@
     </div>
     <modal
       v-show="isFilterModalVisible"
-      :groups="array"
+      :groups="filteredGroups"
       @onFilter="changeHandler"
       @close="toggleFilter"
     />
@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      array: groups,
+      filteredGroups: groups,
       isFilterModalVisible: false,
     };
   },
@@ -42,10 +42,10 @@ export default {
       this.isFilterModalVisible = !this.isFilterModalVisible;
     },
     resetData() {
-      this.array = groups;
+      this.filteredGroups = groups;
     },
     changeHandler(value) {
-      this.array = value;
+      this.filteredGroups = value;
       this.isFilterModalVisible = false;
     },
   },

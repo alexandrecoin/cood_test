@@ -50,9 +50,9 @@
         </footer>
         <button
           type="button"
-          class="btn-green"
           @click="close"
           aria-label="Close modal"
+          :disabled="!isFilterAvailable"
         >
           Use selected filter
         </button>
@@ -72,6 +72,7 @@ export default {
       selectedType: {},
       usersNumber: 0,
       userName: '',
+      isFilterAvailable: false
     };
   },
   methods: {
@@ -87,16 +88,19 @@ export default {
         this.filteredGroups = this.$props.groups.filter(
           (group) => group.type === this.selectedType,
         );
+        this.isFilterAvailable = true;
       }
       if (this.userName) {
         this.filteredGroups = this.$props.groups.filter((group) =>
           group.name.toLowerCase().includes(this.userName.toLowerCase()),
         );
+        this.isFilterAvailable = true;
       }
       if (this.usersNumber) {
         this.filteredGroups = this.$props.groups.filter(
           (group) => group.users.length >= this.usersNumber,
         );
+        this.isFilterAvailable = true;
       }
       return this.filteredGroups;
     },
@@ -107,6 +111,7 @@ export default {
     },
     close() {
       this.$emit('onFilter', this.filteredGroups);
+      this.isFilterAvailable = false;
       this.resetFilters();
     },
   },
@@ -167,12 +172,5 @@ export default {
   font-weight: bold;
   color: #4aae9b;
   background: transparent;
-}
-
-.btn-green {
-  color: white;
-  background: #4aae9b;
-  border: 1px solid #4aae9b;
-  border-radius: 2px;
 }
 </style>
