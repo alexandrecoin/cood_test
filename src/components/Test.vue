@@ -1,6 +1,6 @@
 <template>
   <div class="test">
-    <ul v-for="(group, index) in array" v-bind:key="index">
+    <ul v-for="(group, index) in filterGroups" v-bind:key="index">
       <li>
         <div class="card">
           <h1>{{ group.name }}</h1>
@@ -10,13 +10,16 @@
       </li>
     </ul>
     <div>
-      <button @click="toggleFilter" type="button" :disabled="isFilterActivated">Filter</button>
+      <button @click="toggleFilter" type="button" :disabled="isFilterActivated">
+        Filter
+      </button>
       <button @click="resetData" type="button">Clear</button>
     </div>
     <div v-if="isFilterActivated">
-      <select v-model="selected" @change="onChange($event)">
+      <p>Filtre par classe</p>
+      <select v-model="selectedType">
         <option
-          v-for="(group, index) in unique"
+          v-for="(group, index) in uniqueTypes"
           :value="group.type"
           :key="index"
         >
@@ -27,7 +30,8 @@
         <p>Filtre par nombre minimum d'utilisateurs</p>
         <input
           v-model="usersNumber"
-          @input="numberFilter($event)"
+          type="number"
+          min="0"
           placeholder="Rentrez un nombre"
         />
       </div>
@@ -35,7 +39,7 @@
         <p>Filtre par nom de groupe</p>
         <input
           v-model="userName"
-          @input="nameFilter($event)"
+          type="text"
           placeholder="Rentrez un nom de groupe"
         />
       </div>
@@ -47,53 +51,51 @@
 import groups from '../data/groups.json';
 export default {
   name: 'Test',
+  computed: {
+    filterGroups() {
+      let filteredGroups = groups;
+      /* eslint-disable no-console */
+      if (Object.entries(this.selectedType).length > 0) {
+        filteredGroups = groups.filter((group) => group.type === this.selectedType);
+      }
+      if (this.userName) {
+        filteredGroups = groups.filter((group) =>
+          group.name.toLowerCase().includes(this.userName.toLowerCase()),
+        );
+      }
+      if (this.usersNumber) {
+        filteredGroups = groups.filter(
+          (group) => group.users.length >= this.usersNumber,
+        );
+      }
+      return filteredGroups;
+    },
+  },
   data() {
     return {
-      array: groups,
       isFilterActivated: false,
-      // Filtre 1
-      selected: {},
-      unique: [],
-      // Filtre 2
+      uniqueTypes: [],
+      selectedType: {},
       usersNumber: null,
-      // Filtre 3
       userName: '',
     };
   },
   methods: {
     getUniqueTypes() {
-      this.unique = groups
+      this.uniqueTypes = groups
         .map((e) => e['type'])
         .map((e, i, final) => final.indexOf(e) === i && i)
         .filter((obj) => groups[obj])
         .map((e) => groups[e]);
-      /* eslint-disable no-console */
     },
     toggleFilter() {
       this.isFilterActivated = !this.isFilterActivated;
     },
-    onChange(event) {
-      let filteredArray = groups.filter(
-        (group) => group.type === event.target.value,
-      );
-      this.array = filteredArray;
-    },
-    numberFilter(event) {
-      this.array = groups.filter(
-        (group) => group.users.length >= event.target.value,
-      );
-    },
-    nameFilter(event) {
-      this.array = groups.filter((group) =>
-        group.name.toLowerCase().includes(event.target.value.toLowerCase()),
-      );
-    },
     resetData() {
-      this.array = groups;
-      this.toggleFilter();
-      this.selected = {},
+      this.selectedType = {}, 
       this.usersNumber = null;
-      this.userName = ''
+      this.userName = '';
+      this.toggleFilter();
     },
   },
   mounted() {
@@ -107,7 +109,7 @@ export default {
   display: flex;
 }
 h1 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 .card {
   border: 1px solid black;
