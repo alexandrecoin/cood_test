@@ -19,6 +19,14 @@
                 {{ group.type }}
               </option>
             </select>
+            <button
+              type="button"
+              class="btn-close"
+              @click="close"
+              aria-label="Close modal"
+            >
+              x
+            </button>
           </slot>
         </header>
         <section class="modal-body" id="modalDescription">
@@ -41,7 +49,7 @@
               <p>Filtre par nom de groupe</p>
               <input
                 v-model="userName"
-                @change="filterGroups"
+                v-on:input="filterGroups"
                 type="text"
                 placeholder="Rentrez un nom de groupe"
               />
@@ -50,6 +58,7 @@
         </footer>
         <button
           type="button"
+          class="btn-green"
           @click="close"
           aria-label="Close modal"
           :disabled="!isFilterAvailable"
@@ -72,7 +81,7 @@ export default {
       selectedType: {},
       usersNumber: 0,
       userName: '',
-      isFilterAvailable: false
+      isFilterAvailable: false,
     };
   },
   methods: {
@@ -88,20 +97,18 @@ export default {
         this.filteredGroups = this.$props.groups.filter(
           (group) => group.type === this.selectedType,
         );
-        this.isFilterAvailable = true;
-      }
-      if (this.userName) {
-        this.filteredGroups = this.$props.groups.filter((group) =>
-          group.name.toLowerCase().includes(this.userName.toLowerCase()),
-        );
-        this.isFilterAvailable = true;
       }
       if (this.usersNumber) {
         this.filteredGroups = this.$props.groups.filter(
           (group) => group.users.length >= this.usersNumber,
         );
-        this.isFilterAvailable = true;
       }
+      if (this.userName) {
+        this.filteredGroups = this.$props.groups.filter((group) =>
+          group.name.toLowerCase().includes(this.userName.toLowerCase()),
+        );
+      }
+      this.isFilterAvailable = true;
       return this.filteredGroups;
     },
     resetFilters() {
@@ -150,7 +157,6 @@ export default {
 
 .modal-header {
   border-bottom: 1px solid #eeeeee;
-  color: #4aae9b;
   justify-content: space-between;
 }
 
@@ -172,5 +178,12 @@ export default {
   font-weight: bold;
   color: #4aae9b;
   background: transparent;
+}
+
+.btn-green {
+  color: white;
+  background: #4aae9b;
+  border: 1px solid #4aae9b;
+  border-radius: 2px;
 }
 </style>
