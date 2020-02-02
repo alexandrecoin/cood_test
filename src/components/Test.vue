@@ -54,7 +54,6 @@ export default {
   computed: {
     filterGroups() {
       let filteredGroups = groups;
-      /* eslint-disable no-console */
       if (Object.entries(this.selectedType).length > 0) {
         filteredGroups = groups.filter((group) => group.type === this.selectedType);
       }
