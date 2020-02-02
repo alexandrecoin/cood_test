@@ -19,14 +19,6 @@
                 {{ group.type }}
               </option>
             </select>
-            <button
-              type="button"
-              class="btn-close"
-              @click="close"
-              aria-label="Close modal"
-            >
-              x
-            </button>
           </slot>
         </header>
         <section class="modal-body" id="modalDescription">
@@ -71,6 +63,11 @@
 </template>
 
 <script>
+import {
+  filterByName,
+  filterByType,
+  filterByUserNumber,
+} from '../helpers/filters';
 export default {
   name: 'modal',
   props: ['groups'],
@@ -93,22 +90,14 @@ export default {
         .map((e) => this.$props.groups[e]);
     },
     filterGroups() {
-      if (Object.entries(this.selectedType).length > 0) {
-        this.filteredGroups = this.$props.groups.filter(
-          (group) => group.type === this.selectedType,
-        );
-      }
-      if (this.usersNumber) {
-        this.filteredGroups = this.$props.groups.filter(
-          (group) => group.users.length >= this.usersNumber,
-        );
-      }
-      if (this.userName) {
-        this.filteredGroups = this.$props.groups.filter((group) =>
-          group.name.toLowerCase().includes(this.userName.toLowerCase()),
-        );
-      }
       this.isFilterAvailable = true;
+      this.filteredGroups = filterByUserNumber(
+        filterByType(
+          filterByName(this.$props.groups, this.userName),
+          this.selectedType,
+        ),
+        this.usersNumber,
+      );
       return this.filteredGroups;
     },
     resetFilters() {
