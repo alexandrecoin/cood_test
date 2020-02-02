@@ -49,25 +49,19 @@
 
 <script>
 import groups from '../data/groups.json';
+import {
+  filterByName,
+  filterByType,
+  filterByUserNumber,
+} from '../helpers/filters';
 export default {
   name: 'Test',
   computed: {
     filterGroups() {
-      let filteredGroups = groups;
-      if (Object.entries(this.selectedType).length > 0) {
-        filteredGroups = groups.filter((group) => group.type === this.selectedType);
-      }
-      if (this.userName) {
-        filteredGroups = groups.filter((group) =>
-          group.name.toLowerCase().includes(this.userName.toLowerCase()),
-        );
-      }
-      if (this.usersNumber) {
-        filteredGroups = groups.filter(
-          (group) => group.users.length >= this.usersNumber,
-        );
-      }
-      return filteredGroups;
+      return filterByUserNumber(
+        filterByType(filterByName(groups, this.userName), this.selectedType),
+        this.usersNumber,
+      );
     },
   },
   data() {
@@ -91,8 +85,7 @@ export default {
       this.isFilterActivated = !this.isFilterActivated;
     },
     resetData() {
-      this.selectedType = {}, 
-      this.usersNumber = null;
+      (this.selectedType = {}), (this.usersNumber = null);
       this.userName = '';
       this.toggleFilter();
     },
